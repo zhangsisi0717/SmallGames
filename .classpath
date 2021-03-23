@@ -8,5 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/cse131-spring21-assignment-06/lib/hamcrest-2.2.jar"/>
 	<classpathentry kind="lib" path="/cse131-spring21-assignment-06/lib/stdlib-package.jar"/>
+	<classpathentry kind="src" path="support_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
