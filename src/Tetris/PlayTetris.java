@@ -1,6 +1,8 @@
 package Tetris;
 
 import edu.princeton.cs.introcs.StdDraw;
+
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 public class PlayTetris {
@@ -15,7 +17,7 @@ public class PlayTetris {
 	public static void setupDrawing() {
 		StdDraw.setCanvasSize(360, 720);
 		StdDraw.setXscale(0, 0.5);
-		StdDraw.setYscale(0, 1);
+		StdDraw.setYscale(0, 1.1);
 	}
 	
 	
@@ -45,19 +47,19 @@ public class PlayTetris {
 		return keyCode;
 	}
 	
-	
-	
-	public static void main(String[] args) {
+	public static void playGame() {
+		while(true) {
 		setupDrawing();
 		TetrisBoard tetris= new TetrisBoard();
 		tetris.drawBoard();
 		StdDraw.pause(500);
+		
 		while(true) {
 			if (!tetris.isAlive()) {
 				break;
 			}
 			tetris.drawBoard();
-			StdDraw.pause(100);
+			StdDraw.pause(50);
 			int keyCode = waitForArrowKey(200);
 			if (keyCode == LEFT) {
 				tetris.moveLeft();
@@ -74,9 +76,20 @@ public class PlayTetris {
 				tetris.moveDown();
 			}
 
+	}	
+
+		StdDraw.setPenColor(Color.white);
+		StdDraw.text(0.25, 1.03, "Game over, click to restart ");
+		StdDraw.show();
+		while(true) {
+			if(StdDraw.isMousePressed()) {
+				break;
+			}
+		}
+		}
 	}
 	
-	
-	
-
-}}
+	public static void main(String[] args) {
+		playGame();
+}
+	}

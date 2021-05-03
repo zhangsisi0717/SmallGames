@@ -17,6 +17,7 @@ public class TetrisBoard {
 	private List<Integer> idToIdentity = new ArrayList<Integer>();
 	private List<Integer> fixedBlockId = new ArrayList<Integer>();
 	private MovingBlock movingBlock;
+	private int score = 0;
 	
 	private static int UP = 0;
 	private static int DOWN = 1;
@@ -28,6 +29,7 @@ public class TetrisBoard {
 	private static int Y = 1;
 	private static Color[] colorPalette;
 	private static Color BACKGROUND_COLOR = new Color(204,229,255);
+	private static Color SCOREBOARD_COLOR = new Color(153,204,255);
 	private static Color LINE_COLOR = new Color(255,255,255);
 
 
@@ -44,27 +46,22 @@ public class TetrisBoard {
 		initIdToColor();
 		initIdToIdentity();
 		initColorPalette();
-		initMovingBlock();	
+		updateMovingBlock();
 	}
 	
 	public void initColorPalette() {
 		Color[] p ={new Color(255,102,102),new Color(255,178,102),new Color(255,255,102),
-				new Color(102,255,178),new Color(153,255,255),new Color(102,178,255),
+				new Color(102,255,178),new Color(102,178,255),new Color(178,102,255),
 				new Color(153,153,255),new Color(255,153,204)};
 		this.colorPalette = p;
 	}
 		
 	
 	public void initIdToCoordinate() {
-//		int num = 0;
 		for (int r = 0; r < numRows; r++) {
 			for (int c = 0; c < numColumns; c++) {
 				this.idToCoordinate[r * numColumns + c][0] = this.blockwidth / 2.0 + c * this.blockwidth;
 				this.idToCoordinate[r * numColumns + c][1] = this.blockwidth / 2.0 + r * this.blockwidth;
-//				String message = String.format("(%d, %d) = (%f,%f)", r,c,this.blockwidth / 2.0 + c * this.blockwidth, this.blockwidth / 2.0 + r * this.blockwidth);
-//				System.out.println(num);
-//				System.out.println(message);
-//				num +=1;
 			}
 
 		}
@@ -73,7 +70,6 @@ public class TetrisBoard {
 	
 	public void initIdToColor(){
 		for (int i=0; i<numColumns*numRows; ++i) {
-//			this.idToColor.set(i, BACKGROUND_COLOR);
 			this.idToColor.add(BACKGROUND_COLOR);
 		}
 	}
@@ -81,15 +77,10 @@ public class TetrisBoard {
 	
 	public void initIdToIdentity(){
 		for (int i=0; i<numColumns*numRows; ++i) {
-//			idToIdentity[i] = EMPTY;
 			this.idToIdentity.add(EMPTY);
 		}
 	}
 	
-	public void initMovingBlock() {
-		Color newColor = this.colorPalette[(int) (Math.random()* this.colorPalette.length)];
-		this.movingBlock = new TeeWee(183,newColor);
-	}
 	
 	public void drawBoard() {
 		StdDraw.enableDoubleBuffering();
@@ -101,12 +92,22 @@ public class TetrisBoard {
 	}
 	
 	public void drawbackground(){
+		StdDraw.clear(SCOREBOARD_COLOR);
+		StdDraw.setPenRadius(0.01);
+		StdDraw.setPenColor(Color.white);
+		StdDraw.text(0.25, 1.06, "Score: " + Integer.toString(this.score));
+		StdDraw.setPenRadius(0.005);
+		StdDraw.rectangle(0.25, 1.05, 0.25, 0.05);
+		StdDraw.rectangle(0.25, 1.05, 0.23, 0.04);
+		
+		StdDraw.setPenRadius();
 		StdDraw.setPenColor(BACKGROUND_COLOR);
 		StdDraw.filledRectangle(0.25, 0.5, 0.25, 0.5);
 		for (int i=0; i<this.idToCoordinate.length;++i) {
 			StdDraw.setPenColor(LINE_COLOR);
 			StdDraw.square(idToCoordinate[i][X], idToCoordinate[i][Y], blockwidth/2);
 		}
+		
 	}
 	
 	public void drawFixedBlocks() {
@@ -124,11 +125,13 @@ public class TetrisBoard {
 	
 	public void drawMovingBlock() {
 		for(int id:movingBlock.getCurForm()) {
+			if(id<this.numColumns*this.numRows) {
 			StdDraw.setPenColor(movingBlock.getBlockColor());
 			StdDraw.filledSquare(idToCoordinate[id][X], idToCoordinate[id][Y],blockwidth/2);
 			StdDraw.setPenColor(Color.black);
 			StdDraw.setPenRadius(0.005);
 			StdDraw.square(idToCoordinate[id][X], idToCoordinate[id][Y],blockwidth/2);
+			}
 		}
 	}
 	
@@ -164,6 +167,7 @@ public class TetrisBoard {
 	public void moveDown() {
 		boolean couldMove = true;
 		for(int blockId : movingBlock.getCurForm()) {
+			if(blockId-numColumns < this.numColumns * this.numRows) {
 			if(blockId < numColumns || idToIdentity.get(blockId - numColumns)==BRICK) {
 				couldMove = false;
 				fixMovingBlock();
@@ -171,8 +175,9 @@ public class TetrisBoard {
 				break;	
 			}
 		}
+		}
 		if(couldMove) {
-			this.movingBlock.setBlockSequence((-1)*numColumns);//move one unit left
+			this.movingBlock.setBlockSequence((-1)*numColumns);//move down one unit 
 		}
 	}
 	
@@ -192,15 +197,20 @@ public class TetrisBoard {
 	public void fixMovingBlock() {
 		for(int i: this.movingBlock.getCurForm()) {
 			this.fixedBlockId.add(i);
+			if(i<this.numColumns * this.numRows) {
 			this.idToColor.set(i, this.movingBlock.getBlockColor());
-			this.idToIdentity.set(i, BRICK);
+			this.idToIdentity.set(i, BRICK);}
 		}
 		updateMovingBlock();
 	}
 	
 	public void updateMovingBlock() { ///not finished here
 		Color newColor = this.colorPalette[(int) (Math.random()* this.colorPalette.length)];
-		this.movingBlock = new TeeWee(183,newColor);
+		int leftMostBlock = 213;
+		MovingBlock[] types = {new TeeWee(leftMostBlock,newColor),new OrangeRicky(leftMostBlock,newColor),
+				new BlueRicky(leftMostBlock,newColor),new RhodeIslandZ(leftMostBlock,newColor), new ClevelandZ(leftMostBlock,newColor),
+				new Hero(leftMostBlock,newColor), new SmashBoy(leftMostBlock,newColor)};
+		this.movingBlock = types[(int) (Math.random()*types.length)];
 
 	}
 	
@@ -226,6 +236,8 @@ public class TetrisBoard {
 				newIdToIdentity.addAll(tempIdentity);
 			}
 	}
+		
+		this.score += (this.numColumns*this.numRows - newIdToIdentity.size());
 		for(int idx=0; idx<this.numColumns*this.numRows;++idx) {
 			if(idx<newIdToIdentity.size() && newIdToIdentity.get(idx) == BRICK) {
 				newfixedBlockId.add(idx);
