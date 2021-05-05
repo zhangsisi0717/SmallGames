@@ -285,7 +285,7 @@ public class SnakeBoard {
 		int headId = this.snakeBody.get(this.snakeBody.size() - 1);
 		int tailId = this.snakeBody.get(0);
 		if ((headId + 1) % this.boardSize != 0 && this.idToIdentity[headId + 1] != BRICK
-				&& this.idToIdentity[headId + 1] != SNAKE) { // if head is not at end and the ahead block is not brick
+				&& (this.idToIdentity[headId + 1] != SNAKE || headId+1 == this.snakeBody.get(0))) { // if head is not at end and the ahead block is not brick
 			this.snakeBody.add(headId + 1);
 			if (this.idToIdentity[headId + 1] != FOOD) { // if forward block is not food
 				this.snakeBody.remove(0);
@@ -308,7 +308,7 @@ public class SnakeBoard {
 		int headId = this.snakeBody.get(this.snakeBody.size() - 1);
 		int tailId = this.snakeBody.get(0);
 		if ((headId / this.boardSize < this.boardSize - 1) && this.idToIdentity[headId + this.boardSize] != BRICK
-				&& this.idToIdentity[headId + this.boardSize] != SNAKE) {
+				&& (this.idToIdentity[headId + this.boardSize] != SNAKE || headId + this.boardSize == this.snakeBody.get(0))) {
 			this.snakeBody.add(headId + this.boardSize);
 			if (this.idToIdentity[headId + this.boardSize] != FOOD) { // if up block is not food
 				this.snakeBody.remove(0);
@@ -329,7 +329,7 @@ public class SnakeBoard {
 		int headId = this.snakeBody.get(this.snakeBody.size() - 1);
 		int tailId = this.snakeBody.get(0);
 		if ((headId % this.boardSize != 0) && this.idToIdentity[headId - 1] != BRICK
-				&& this.idToIdentity[headId - 1] != SNAKE) {
+				&& (this.idToIdentity[headId - 1] != SNAKE || headId-1 == this.snakeBody.get(0))) {
 			this.snakeBody.add(headId - 1);
 			if (this.idToIdentity[headId - 1] != FOOD) { // if left block is not food
 				this.snakeBody.remove(0);
@@ -350,7 +350,7 @@ public class SnakeBoard {
 		int headId = this.snakeBody.get(this.snakeBody.size() - 1);
 		int tailId = this.snakeBody.get(0);
 		if ((headId / this.boardSize > 0) && this.idToIdentity[headId - this.boardSize] != BRICK
-				&& this.idToIdentity[headId - this.boardSize] != SNAKE) {
+				&& (this.idToIdentity[headId - this.boardSize] != SNAKE || headId - this.boardSize == this.snakeBody.get(0))) {
 			this.snakeBody.add(headId - this.boardSize);
 			if (this.idToIdentity[headId - this.boardSize] != FOOD) { // if up block is not food
 				this.snakeBody.remove(0);
