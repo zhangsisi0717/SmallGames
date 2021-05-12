@@ -254,6 +254,7 @@ public class TetrisBoard {
 		this.fixedBlockId = newfixedBlockId;
 	}
 	
+	
 	public boolean isAlive() {
 		for (Integer i: this.fixedBlockId) {
 			if(i+this.numColumns>this.numColumns*this.numRows-1) {

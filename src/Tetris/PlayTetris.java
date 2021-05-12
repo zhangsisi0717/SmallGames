@@ -72,6 +72,11 @@ public class PlayTetris {
 				tetris.rotate();
 			
 		}
+			else if(keyCode == DOWN) {
+				tetris.moveDown();
+				tetris.moveDown();
+				tetris.moveDown();
+			}
 			else {
 				tetris.moveDown();
 			}
